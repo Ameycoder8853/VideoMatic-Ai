@@ -1,5 +1,5 @@
 "use client"
-import { Textarea } from "./textarea"
+import { Textarea } from "./Textarea"
 
 import React, { useState } from 'react'
 import {
