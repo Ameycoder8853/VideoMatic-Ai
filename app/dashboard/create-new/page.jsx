@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import SelectStyle from './_components/SelectStyle';
 import SelectTopic from './_components/SelectTopic';
-import SelectDuration from './_components/SelectDuration';
+import SelectDuration from './_components/selectDuration';
 import axios from 'axios';
 import CustomLoading from '../_components/CustomLoading';
 import { v4 as uuidv4 } from 'uuid';
