@@ -60,7 +60,7 @@ const LandingPage = () => {
               </button>
               <button
                 onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
-                className="transform hover:scale-105 transition-transform duration-200 text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-lg px-8 py-4 text-center"
+                className="transform hover:scale-105 transition-transform duration-200 text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-lg px-8 py-4 text-center m-5"
               >
                 Learn More
               </button>
