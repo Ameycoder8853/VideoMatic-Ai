@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -7,29 +7,29 @@ import {
     DialogTitle,
 } from "./dialog";
 import { Player } from "@remotion/player";
-import { RemotionVideo } from './RemotionVideo';
-import { Button } from './button';
-import { db } from '../../db';
-import { VideoData } from '../../schema';
-import { eq } from 'drizzle-orm';
-import { useRouter } from 'next/navigation';
+import { RemotionVideo } from "./RemotionVideo";
+import { Button } from "./button";
+import { db } from "../../db";
+import { VideoData } from "../../schema";
+import { eq } from "drizzle-orm";
+import { useRouter } from "next/navigation";
 
 export const PlayerDialog = ({ playVideo, videoId }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [videoData, setVideoData] = useState(null);
-    const [durationInFrame, setDurationInFrame] = useState(1800);
+    const [durationInFrame, setDurationInFrame] = useState(150); // Default value
     const router = useRouter();
 
     useEffect(() => {
         if (playVideo && videoId) {
             setOpenDialog(true);
-            GetVideoData();
+            fetchVideoData();
         } else {
             setOpenDialog(false);
         }
     }, [playVideo, videoId]);
 
-    const GetVideoData = async () => {
+    const fetchVideoData = async () => {
         const result = await db.select().from(VideoData).where(eq(VideoData.id, videoId));
         if (result && result[0]) {
             setVideoData(result[0]);
@@ -38,7 +38,7 @@ export const PlayerDialog = ({ playVideo, videoId }) => {
 
     const closeDialog = () => {
         setOpenDialog(false);
-        router.replace('/dashboard');
+        router.replace("/dashboard");
     };
 
     return (
@@ -50,21 +50,26 @@ export const PlayerDialog = ({ playVideo, videoId }) => {
                         {videoData ? (
                             <Player
                                 component={RemotionVideo}
-                                durationInFrames={Number(durationInFrame.toFixed(0))}
+                                durationInFrames={durationInFrame} // Dynamically updated duration
                                 compositionWidth={300}
                                 compositionHeight={450}
                                 fps={30}
                                 controls={true}
                                 inputProps={{
                                     ...videoData,
-                                    setDurationInFrames: (frameValue) => setDurationInFrame(frameValue),
+                                    setDurationInFrame: (frameValue) => {
+                                        console.log("Setting duration in frames:", frameValue);
+                                        setDurationInFrame(frameValue);
+                                    },
                                 }}
                             />
                         ) : (
                             <p>Loading video...</p>
                         )}
-                        <div className='flex gap-10 mt-10'>
-                            <Button variant="ghost" onClick={closeDialog}>Cancel</Button>
+                        <div className="flex gap-10 mt-10">
+                            <Button variant="ghost" onClick={closeDialog}>
+                                Cancel
+                            </Button>
                             <Button>Export</Button>
                         </div>
                     </DialogDescription>
