@@ -18,7 +18,6 @@ const Provider = ({children}) => {
         const result =await db.select().from(Users)
         .where(eq(Users.email,user?.primaryEmailAddress?.emailAddress));
 
-        console.log(result);
         if(!result[0])
             {
                 await db.insert(Users).values({

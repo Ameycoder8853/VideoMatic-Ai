@@ -8,15 +8,21 @@ import CustomLoading from '../_components/CustomLoading';
 import { v4 as uuidv4 } from 'uuid';
 import { VideoDataContext } from '../../_context/VideoDataContext';
 import { db } from '../../db';
-import { VideoData } from '../../schema';
+import { Users, VideoData } from '../../../configs/schema';
 import { useUser } from '@clerk/nextjs';
 import { PlayerDialog } from '../_components/PlayerDialog';
+import { UserDetailContext } from '../../_context/UserDetailContext'
+import { toast } from 'sonner';
+import { eq } from 'drizzle-orm';
 
 const CreateNew = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [playVideo, setPlayVideo] = useState(false);
   const [videoId, setVideoId] = useState(null);
+  const {userDetail,setUserDetail}= useContext(UserDetailContext)
+
+
 
   const { videoData, setVideoData } = useContext(VideoDataContext);
   const { user } = useUser();
@@ -26,6 +32,13 @@ const CreateNew = () => {
   };
 
   const onCreateClickHandler = async () => {
+    if (!userDetail || userDetail.credits <= 0) {
+      toast("You don't have enough credits");
+      return;
+    }
+    
+    // Proceed with generating the video
+    
     setLoading(true);
     try {
       const scriptData = await GetVideoScript();
@@ -119,9 +132,8 @@ const CreateNew = () => {
           imageList: videoData.imageList,
           duration: formData.duration,
           createdBy: user?.primaryEmailAddress?.emailAddress,
-        })
-        .returning({ id: VideoData?.id });
-
+        }).returning({ id: VideoData?.id })
+          await UpdateUserCredits();
       console.log("Saved to DB:", result);
       return result;
     } catch (error) {
@@ -130,6 +142,16 @@ const CreateNew = () => {
       setLoading(false);
     }
   };
+
+
+  
+  const UpdateUserCredits =async()=>{
+    const result=await db.update(Users).set({
+      credits:userDetail?.credits-10
+    }).where(eq(Users?.email,user?.primaryEmailAddress?.emailAddress))
+    console.log(result);
+  }
+
 
   return (
     <div className="md:px-20">
